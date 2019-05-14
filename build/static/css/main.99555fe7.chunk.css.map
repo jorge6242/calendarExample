@@ -1,0 +1,1 @@
+{"version":3,"sources":["/home/jorge/Documents/proyectos/calendar/src/Components/Day/index.sass"],"names":[],"mappings":"AAAA,cACE,mBAAyB,CACzB,gBAAiB,CACjB,YAAa","file":"main.99555fe7.chunk.css","sourcesContent":[".td-container {\n  max-width: calc(100% / 7);\n  min-height: 130px;\n  padding: 10px; }\n"]}
