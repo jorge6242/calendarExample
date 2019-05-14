@@ -17,7 +17,14 @@ const Day = ({ day, currentDay, handleReminder, reminders, handleEdit }) => (
             />
           ))}
       </div>
-      <div className="day-container__add" onClick={() => handleReminder(day, currentDay)}>Add</div>
+      {day > 0 && (
+        <div
+          className="day-container__add"
+          onClick={() => handleReminder(day, currentDay)}
+        >
+          Add
+        </div>
+      )}
     </div>
   </TableCell>
 );
