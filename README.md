@@ -1,6 +1,6 @@
 Calendar Example.
 
-## `Installation`
+## Tecnologies
 
 ### ReactJS
 ### Material UI
