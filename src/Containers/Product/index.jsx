@@ -3,32 +3,34 @@ import { connect } from "react-redux";
 import ClearIcon from "@material-ui/icons/Clear";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Grid from "@material-ui/core/Grid";
-import ReminderForm from "../../Components/ReminderForm";
-import {
-  createReminder,
-  updateReminder,
-  deleteReminder
-} from "../../Actions/remindersAction";
 import { updateModal } from "../../Actions/modalActions";
 import { clear, setEdit } from "../../Actions/productFormActions";
+import { create, getAll, update, remove } from "../../Actions/productActions";
 import "./index.sass";
+import ProductForm from "../../Components/ProductForm";
 
-class Reminder extends Component {
+class Product extends Component {
   handleReminderForm = form => {
-    const { currentDate, reminderFormReducer } = this.props;
-    const color =
-      reminderFormReducer.color === "" ? "blue" : reminderFormReducer.color;
-    if (reminderFormReducer.description !== "") {
-      this.props.updateReminder({
-        payload: { id: reminderFormReducer.id, ...form, color }
+    console.log("form.id ", form.id);
+    if (form.id === "") {
+      this.props.create(form).then(res => {
+        if (res.status === 200 || res.status === 201) {
+          this.props.getAll();
+          this.props.updateModal({
+            payload: { status: false, element: <div /> }
+          });
+        }
       });
     } else {
-      this.props.createReminder({
-        payload: { date: currentDate, ...form, color }
+      this.props.update(form).then(res => {
+        if (res.status === 200 || res.status === 201) {
+          this.props.getAll();
+          this.props.updateModal({
+            payload: { status: false, element: <div /> }
+          });
+        }
       });
     }
-    this.props.updateModal({ payload: { status: false, element: <div /> } });
-    this.props.clear();
   };
 
   handleClose = () => {
@@ -37,20 +39,26 @@ class Reminder extends Component {
   };
 
   handleRemove = () => {
-    const { reminderFormReducer } = this.props;
-    this.props.deleteReminder({ payload: { ...reminderFormReducer } });
-    this.props.updateModal({ payload: { status: false, element: <div /> } });
+    const { productFormReducer } = this.props;
+    this.props.remove(productFormReducer.id).then(res => {
+      if (res.status === 200 || res.status === 201) {
+        this.props.getAll();
+        this.props.updateModal({
+          payload: { status: false, element: <div /> }
+        });
+      }
+    });
     this.props.clear();
   };
 
   changeColor = color => {
-    const { reminderFormReducer } = this.props;
-    reminderFormReducer.color = color;
-    this.props.setEdit(reminderFormReducer);
+    const { productFormReducer } = this.props;
+    productFormReducer.color = color;
+    this.props.setEdit(productFormReducer);
   };
 
   render() {
-    const { reminderFormReducer } = this.props;
+    const { productFormReducer } = this.props;
     return (
       <Grid container spacing={0} className="reminder-container">
         <Grid container spacing={0}>
@@ -63,17 +71,17 @@ class Reminder extends Component {
             <ClearIcon />
           </Grid>
           <Grid item xs={8} className="reminder-container__title">
-            Reminder
+            Product
           </Grid>
           <Grid item xs={2} className="reminder-container__delete">
-            {reminderFormReducer.description !== "" && (
+            {productFormReducer.id !== "" && (
               <DeleteIcon onClick={() => this.handleRemove()} />
             )}
           </Grid>
         </Grid>
         <Grid container spacing={0}>
           <Grid item xs={12}>
-            <ReminderForm
+            <ProductForm
               handleReminderForm={this.handleReminderForm}
               changeColor={this.changeColor}
             />
@@ -84,18 +92,19 @@ class Reminder extends Component {
   }
 }
 
-const mS = ({ reminderFormReducer }) => ({ reminderFormReducer });
+const mS = ({ productFormReducer }) => ({ productFormReducer });
 
 const mD = {
-  createReminder,
-  updateReminder,
-  deleteReminder,
   updateModal,
   setEdit,
-  clear
+  clear,
+  create,
+  getAll,
+  update,
+  remove
 };
 
 export default connect(
   mS,
   mD
-)(Reminder);
+)(Product);
